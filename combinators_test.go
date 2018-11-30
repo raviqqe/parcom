@@ -38,21 +38,21 @@ func TestNotCharFail(t *testing.T) {
 
 func TestWrap(t *testing.T) {
 	s := parcom.NewState("abc")
-	x, err := s.Wrap(s.String("a"), s.String("b"), s.String("c"))()
+	x, err := s.Wrap(s.Str("a"), s.Str("b"), s.Str("c"))()
 	assert.Equal(t, "b", x)
 	assert.Nil(t, err)
 }
 
 func TestPrefix(t *testing.T) {
 	s := parcom.NewState("abc")
-	x, err := s.Prefix(s.String("ab"), s.String("c"))()
+	x, err := s.Prefix(s.Str("ab"), s.Str("c"))()
 	assert.Equal(t, "c", x)
 	assert.Nil(t, err)
 }
 
 func TestPrefixFail(t *testing.T) {
 	s := parcom.NewState("abc")
-	x, err := s.Prefix(s.String("ad"), s.String("c"))()
+	x, err := s.Prefix(s.Str("ad"), s.Str("c"))()
 	assert.Nil(t, x)
 	assert.NotNil(t, err)
 }
@@ -73,7 +73,7 @@ func TestManyFail(t *testing.T) {
 	for _, str := range []string{"="} {
 		s := parcom.NewState(str)
 		x, err := s.Exhaust(s.Many(func() (interface{}, error) {
-			x, err := s.String("=")()
+			x, err := s.Str("=")()
 
 			if err != nil {
 				return nil, err
@@ -153,7 +153,7 @@ func TestOrFail(t *testing.T) {
 
 func TestMaybeSuccess(t *testing.T) {
 	s := parcom.NewState("foo")
-	x, err := s.Maybe(s.String("foo"))()
+	x, err := s.Maybe(s.Str("foo"))()
 
 	t.Log(x)
 
@@ -163,7 +163,7 @@ func TestMaybeSuccess(t *testing.T) {
 
 func TestMaybeFailure(t *testing.T) {
 	s := parcom.NewState("bar")
-	x, err := s.Maybe(s.String("foo"))()
+	x, err := s.Maybe(s.Str("foo"))()
 
 	t.Log(x)
 
@@ -173,28 +173,28 @@ func TestMaybeFailure(t *testing.T) {
 
 func TestExhaustWithErroneousParser(t *testing.T) {
 	s := parcom.NewState("")
-	_, err := s.Exhaust(s.String("foo"), exhaustError)()
+	_, err := s.Exhaust(s.Str("foo"), exhaustError)()
 	assert.NotNil(t, err)
 }
 
 func TestStringify(t *testing.T) {
 	str := "foo"
 	s := parcom.NewState(str)
-	x, err := s.Exhaust(s.Stringify(s.And(s.String(str))), exhaustError)()
+	x, err := s.Exhaust(s.Stringify(s.And(s.Str(str))), exhaustError)()
 	assert.Equal(t, str, x)
 	assert.Nil(t, err)
 }
 
 func TestLazy(t *testing.T) {
 	s := parcom.NewState("foo")
-	x, err := s.Lazy(func() parcom.Parser { return s.String("foo") })()
+	x, err := s.Lazy(func() parcom.Parser { return s.Str("foo") })()
 	assert.Equal(t, "foo", x)
 	assert.Nil(t, err)
 }
 
 func TestVoid(t *testing.T) {
 	s := parcom.NewState("foo")
-	x, err := s.Void(s.String("foo"))()
+	x, err := s.Void(s.Str("foo"))()
 	assert.Nil(t, x)
 	assert.Nil(t, err)
 }

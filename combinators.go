@@ -23,8 +23,8 @@ func (s *State) NotChar(r rune) Parser {
 	return s.NotChars(string(r))
 }
 
-// String creates a parser parsing a string.
-func (s *State) String(str string) Parser {
+// Str creates a parser parsing a string.
+func (s *State) Str(str string) Parser {
 	rs := []rune(str)
 	ps := make([]Parser, 0, len(rs))
 
