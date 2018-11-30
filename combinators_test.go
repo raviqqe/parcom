@@ -185,6 +185,11 @@ func TestStringify(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestStringifyPanic(t *testing.T) {
+	s := parcom.NewState("")
+	assert.Panics(t, func() { s.Stringify(s.None())() })
+}
+
 func TestLazy(t *testing.T) {
 	s := parcom.NewState("foo")
 	x, err := s.Lazy(func() parcom.Parser { return s.Str("foo") })()
