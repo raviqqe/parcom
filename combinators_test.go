@@ -15,7 +15,7 @@ func TestChars(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestCharsFail(t *testing.T) {
+func TestCharsError(t *testing.T) {
 	s := parcom.NewState("d")
 	x, err := s.Chars("abc")()
 	assert.Nil(t, x)
@@ -29,7 +29,7 @@ func TestNotChar(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestNotCharFail(t *testing.T) {
+func TestNotCharError(t *testing.T) {
 	s := parcom.NewState(" ")
 	x, err := s.NotChar(' ')()
 	assert.Nil(t, x)
@@ -50,7 +50,7 @@ func TestPrefix(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestPrefixFail(t *testing.T) {
+func TestPrefixError(t *testing.T) {
 	s := parcom.NewState("abc")
 	x, err := s.Prefix(s.Str("ad"), s.Str("c"))()
 	assert.Nil(t, x)
@@ -69,7 +69,7 @@ func TestMany(t *testing.T) {
 	}
 }
 
-func TestManyFail(t *testing.T) {
+func TestManyError(t *testing.T) {
 	for _, str := range []string{"="} {
 		s := parcom.NewState(str)
 		x, err := s.Exhaust(s.Many(func() (interface{}, error) {
@@ -107,7 +107,7 @@ func TestMany1(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestMany1Fail(t *testing.T) {
+func TestMany1Error(t *testing.T) {
 	x, err := testMany1Space("")
 
 	t.Log(err)
@@ -142,7 +142,7 @@ func TestOr(t *testing.T) {
 	}
 }
 
-func TestOrFail(t *testing.T) {
+func TestOrError(t *testing.T) {
 	x, err := testOr("c")
 
 	t.Log(err)
@@ -161,7 +161,7 @@ func TestMaybeSuccess(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestMaybeFailure(t *testing.T) {
+func TestMaybeError(t *testing.T) {
 	s := parcom.NewState("bar")
 	x, err := s.Maybe(s.Str("foo"))()
 
