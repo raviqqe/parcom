@@ -32,7 +32,7 @@ func (s *State) readRune() {
 }
 
 // LineNumber returns a current line number.
-func (s *State) LineNumber() int {
+func (s State) LineNumber() int {
 	return s.lineIndex + 1
 }
 
