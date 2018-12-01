@@ -230,6 +230,8 @@ func (s *State) Stringify(p Parser) Parser {
 
 func stringify(x interface{}) string {
 	switch x := x.(type) {
+	case nil:
+		return ""
 	case string:
 		return x
 	case rune:

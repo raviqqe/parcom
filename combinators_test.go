@@ -185,9 +185,23 @@ func TestStringify(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestStringifyWithNil(t *testing.T) {
+	s := parcom.NewState("")
+	x, err := s.Stringify(s.None())()
+	assert.Equal(t, "", x)
+	assert.Nil(t, err)
+}
+
 func TestStringifyPanic(t *testing.T) {
 	s := parcom.NewState("")
-	assert.Panics(t, func() { s.Stringify(s.None())() })
+	assert.Panics(
+		t,
+		func() {
+			s.Stringify(
+				s.App(func(interface{}) (interface{}, error) { return struct{}{}, nil }, s.None()),
+			)()
+		},
+	)
 }
 
 func TestLazy(t *testing.T) {
