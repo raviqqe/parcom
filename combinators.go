@@ -196,7 +196,7 @@ func (s *State) Exhaust(p Parser, f func(State) error) Parser {
 }
 
 // App creates a parser which applies a function to results of a given parser.
-func (s *State) App(f func(interface{}) interface{}, p Parser) Parser {
+func (s *State) App(f func(interface{}) (interface{}, error), p Parser) Parser {
 	return func() (interface{}, error) {
 		x, err := p()
 
@@ -204,7 +204,7 @@ func (s *State) App(f func(interface{}) interface{}, p Parser) Parser {
 			return nil, err
 		}
 
-		return f(x), nil
+		return f(x)
 	}
 }
 
@@ -225,7 +225,7 @@ func (s *State) Maybe(p Parser) Parser {
 // a given parser. The result of a given parser must be a rune, a string or a
 // sequence of them in []interface{}.
 func (s *State) Stringify(p Parser) Parser {
-	return s.App(func(x interface{}) interface{} { return stringify(x) }, p)
+	return s.App(func(x interface{}) (interface{}, error) { return stringify(x), nil }, p)
 }
 
 func stringify(x interface{}) string {
