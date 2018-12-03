@@ -26,6 +26,9 @@ func (s State) currentRune() rune {
 func (s *State) readRune() {
 	if s.currentRune() == '\n' {
 		s.lineIndex++
+		s.characterIndex = 0
+	} else {
+		s.characterIndex++
 	}
 
 	s.sourceIndex++
