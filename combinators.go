@@ -141,13 +141,11 @@ func (s *State) Or(ps ...Parser) Parser {
 func (s *State) And(ps ...Parser) Parser {
 	return func() (interface{}, error) {
 		xs := make([]interface{}, 0, len(ps))
-		ss := *s
 
 		for _, p := range ps {
 			x, err := p()
 
 			if err != nil {
-				*s = ss
 				return nil, err
 			}
 
