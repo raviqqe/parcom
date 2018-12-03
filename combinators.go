@@ -77,10 +77,18 @@ func (s *State) Prefix(pre, p Parser) Parser {
 // Many creates a parser of more than or equal to 0 repetition of a given parser.
 func (s *State) Many(p Parser) Parser {
 	return func() (interface{}, error) {
-		xs, err := s.Many1(p)()
+		xs := []interface{}{}
 
-		if err != nil {
-			return []interface{}{}, nil
+		for {
+			ss := *s
+			x, err := p()
+
+			if err != nil {
+				*s = ss
+				break
+			}
+
+			xs = append(xs, x)
 		}
 
 		return xs, nil
@@ -89,27 +97,22 @@ func (s *State) Many(p Parser) Parser {
 
 // Many1 creates a parser of more than 0 repetition of a given parser.
 func (s *State) Many1(p Parser) Parser {
+	pp := s.Many(p)
+
 	return func() (interface{}, error) {
-		xs := []interface{}{}
+		x, err := p()
 
-		for i := 0; ; i++ {
-			ss := *s
-			x, err := p()
-
-			if err != nil {
-				*s = ss
-
-				if i == 0 {
-					return nil, err
-				}
-
-				break
-			}
-
-			xs = append(xs, x)
+		if err != nil {
+			return nil, err
 		}
 
-		return xs, nil
+		y, err := pp()
+
+		if err != nil {
+			return nil, err
+		}
+
+		return append([]interface{}{x}, y.([]interface{})...), nil
 	}
 }
 
