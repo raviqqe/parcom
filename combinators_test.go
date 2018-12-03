@@ -84,7 +84,7 @@ func TestManyError(t *testing.T) {
 			}
 
 			return x, nil
-		}), exhaustError)()
+		}))()
 
 		t.Logf("%#v", x)
 
@@ -173,14 +173,14 @@ func TestMaybeError(t *testing.T) {
 
 func TestExhaustWithErroneousParser(t *testing.T) {
 	s := parcom.NewState("")
-	_, err := s.Exhaust(s.Str("foo"), exhaustError)()
+	_, err := s.Exhaust(s.Str("foo"))()
 	assert.NotNil(t, err)
 }
 
 func TestStringify(t *testing.T) {
 	str := "foo"
 	s := parcom.NewState(str)
-	x, err := s.Exhaust(s.Stringify(s.And(s.Str(str))), exhaustError)()
+	x, err := s.Exhaust(s.Stringify(s.And(s.Str(str))))()
 	assert.Equal(t, str, x)
 	assert.Nil(t, err)
 }
@@ -216,8 +216,4 @@ func TestVoid(t *testing.T) {
 	x, err := s.Void(s.Str("foo"))()
 	assert.Nil(t, x)
 	assert.Nil(t, err)
-}
-
-func exhaustError(parcom.State) error {
-	return fmt.Errorf("Parsing error")
 }

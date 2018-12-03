@@ -1,6 +1,7 @@
 package parcom
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -180,16 +181,15 @@ func (State) Void(p Parser) Parser {
 }
 
 // Exhaust creates a parser which fails when a source string is not exhausted
-// after running a given parser. This combinator takes a custom error
-// constructor because "not exhausted" errors are always useless.
-func (s *State) Exhaust(p Parser, f func(State) error) Parser {
+// after running a given parser.
+func (s *State) Exhaust(p Parser) Parser {
 	return func() (interface{}, error) {
 		x, err := p()
 
 		if err != nil {
 			return nil, err
 		} else if !s.exhausted() {
-			return nil, f(*s)
+			return nil, errors.New("a source is not exhausted")
 		}
 
 		return x, nil
