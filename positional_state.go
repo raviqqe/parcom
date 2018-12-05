@@ -54,6 +54,17 @@ func (s *PositionalState) Indent(p Parser) Parser {
 	}
 }
 
+// SameLine creates a parser which parses something in the same line.
+func (s *PositionalState) SameLine(p Parser) Parser {
+	return func() (interface{}, error) {
+		if s.position.columnIndex >= 0 && s.lineIndex != s.position.lineIndex {
+			return nil, errors.New("should be in the same line")
+		}
+
+		return p()
+	}
+}
+
 func (s *PositionalState) atColumn(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.columnIndex != s.position.columnIndex {
