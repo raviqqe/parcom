@@ -24,25 +24,44 @@ func (s *state) stripRight(p parcom.Parser) parcom.Parser {
 }
 
 func TestPositionalStateBlock(t *testing.T) {
+	for _, ss := range []string{
+		"foo\n  bar\n  bar",
+		"foo",
+	} {
+		s := newState(ss)
+		_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+		assert.Nil(t, err)
+	}
+}
+
+func TestPositionalStateBlock1(t *testing.T) {
 	s := newState("foo\n  bar\n  bar")
-	_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
 
 	assert.Nil(t, err)
 }
 
-func TestPositionalStateBlockWithNestedBlocks(t *testing.T) {
+func TestPositionalStateBlock1WithNestedBlock1s(t *testing.T) {
 	s := newState("foo\n  bar\n  bar\n  bar foo\n       bar\n  bar")
 	_, err := s.Exhaust(
-		s.Block(
+		s.Block1(
 			s.stripRight(s.Str("foo")),
 			s.And(
 				s.stripRight(s.Str("bar")),
-				s.Maybe(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar")))),
+				s.Maybe(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar")))),
 			),
 		),
 	)()
 
 	assert.Nil(t, err)
+}
+
+func TestPositionalStateBlock1Error(t *testing.T) {
+	s := newState("foo")
+	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+	assert.Error(t, err)
 }
 
 func TestPositionalStateIndent(t *testing.T) {

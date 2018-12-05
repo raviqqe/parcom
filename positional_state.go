@@ -33,6 +33,11 @@ func (s *PositionalState) WithPosition(p Parser) Parser {
 // Block creates a parser which parses a block of the second parsers prefixed
 // by the first parser.
 func (s *PositionalState) Block(p, pp Parser) Parser {
+	return s.Prefix(p, s.WithPosition(s.Many(s.atColumn(pp))))
+}
+
+// Block1 is the same as the Block but blocks must have at least one element.
+func (s *PositionalState) Block1(p, pp Parser) Parser {
 	return s.Prefix(p, s.WithPosition(s.Many1(s.atColumn(pp))))
 }
 
