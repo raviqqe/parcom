@@ -2,8 +2,8 @@ package parcom
 
 // State is a parser state.
 type State struct {
-	source                                 []rune
-	sourceIndex, lineIndex, characterIndex int
+	source                              []rune
+	sourceIndex, lineIndex, columnIndex int
 }
 
 // NewState creates a parser state.
@@ -26,20 +26,20 @@ func (s State) currentRune() rune {
 func (s *State) readRune() {
 	if s.currentRune() == '\n' {
 		s.lineIndex++
-		s.characterIndex = 0
+		s.columnIndex = 0
 	} else {
-		s.characterIndex++
+		s.columnIndex++
 	}
 
 	s.sourceIndex++
 }
 
-// LineNumber returns a current line number.
-func (s State) LineNumber() int {
+// Line returns a current line number.
+func (s State) Line() int {
 	return s.lineIndex + 1
 }
 
-// CharacterPosition returns a position in a current line.
-func (s State) CharacterPosition() int {
-	return s.characterIndex + 1
+// Column returns a position in a current line.
+func (s State) Column() int {
+	return s.columnIndex + 1
 }

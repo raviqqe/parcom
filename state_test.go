@@ -11,25 +11,25 @@ func TestNewState(t *testing.T) {
 	parcom.NewState("foo")
 }
 
-func TestStateLineNumber(t *testing.T) {
-	assert.Equal(t, 1, parcom.NewState("").LineNumber())
+func TestStateLine(t *testing.T) {
+	assert.Equal(t, 1, parcom.NewState("").Line())
 }
 
-func TestStateCharacterPosition(t *testing.T) {
-	assert.Equal(t, 1, parcom.NewState("").CharacterPosition())
+func TestStateColumn(t *testing.T) {
+	assert.Equal(t, 1, parcom.NewState("").Column())
 }
 
 func TestStateWithNewLine(t *testing.T) {
 	s := parcom.NewState("\n")
 	s.Char('\n')()
-	assert.Equal(t, 2, s.LineNumber())
-	assert.Equal(t, 1, s.CharacterPosition())
+	assert.Equal(t, 2, s.Line())
+	assert.Equal(t, 1, s.Column())
 }
 
-func TestStateCharacterPositionIncrements(t *testing.T) {
+func TestStateColumnIncrements(t *testing.T) {
 	s := parcom.NewState("foo")
 	_, err := s.Str("fo")()
 
 	assert.Nil(t, err)
-	assert.Equal(t, 3, s.CharacterPosition())
+	assert.Equal(t, 3, s.Column())
 }
