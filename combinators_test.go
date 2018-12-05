@@ -57,6 +57,13 @@ func TestPrefixError(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestSuffix(t *testing.T) {
+	s := parcom.NewState("abc")
+	x, err := s.Suffix(s.Str("ab"), s.Str("c"))()
+	assert.Equal(t, "ab", x)
+	assert.Nil(t, err)
+}
+
 func TestMany(t *testing.T) {
 	for _, str := range []string{"", "  "} {
 		s := parcom.NewState(str)
