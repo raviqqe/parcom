@@ -42,14 +42,14 @@ func TestPositionalStateBlock1(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestPositionalStateBlock1WithNestedBlock1s(t *testing.T) {
-	s := newState("foo\n  bar\n  bar\n  bar foo\n       bar\n  bar")
+func TestPositionalStateBlock1WithNestedBlocks(t *testing.T) {
+	s := newState("foo\n  bar\n  foo\n   bar\n  bar")
 	_, err := s.Exhaust(
 		s.Block1(
 			s.stripRight(s.Str("foo")),
-			s.And(
+			s.Or(
 				s.stripRight(s.Str("bar")),
-				s.Maybe(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar")))),
+				s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))),
 			),
 		),
 	)()
