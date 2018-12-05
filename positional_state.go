@@ -65,6 +65,11 @@ func (s *PositionalState) SameLine(p Parser) Parser {
 	}
 }
 
+// SameLineOrIndent creates a parser which parses something in the same line or indented.
+func (s *PositionalState) SameLineOrIndent(p Parser) Parser {
+	return s.Or(s.SameLine(p), s.Indent(p))
+}
+
 func (s *PositionalState) atColumn(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.columnIndex != s.position.columnIndex {

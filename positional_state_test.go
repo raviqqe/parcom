@@ -98,3 +98,22 @@ func TestPositionalStateSameLineError(t *testing.T) {
 
 	assert.Error(t, err)
 }
+
+func TestPositionalStateSameLineOrIndent(t *testing.T) {
+	for _, ss := range []string{"foo foo", "foo\n foo"} {
+		s := newState(ss)
+		_, err := s.WithPosition(
+			s.And(s.stripRight(s.Str("foo")), s.SameLineOrIndent(s.Str("foo"))),
+		)()
+
+		assert.Nil(t, err)
+	}
+
+}
+
+func TestPositionalStateSameLineOrIndentError(t *testing.T) {
+	s := newState("foo\nfoo")
+	_, err := s.WithPosition(s.And(s.stripRight(s.Str("foo")), s.SameLineOrIndent(s.Str("foo"))))()
+
+	assert.Error(t, err)
+}
