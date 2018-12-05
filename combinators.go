@@ -67,17 +67,7 @@ func (s *State) Str(str string) Parser {
 // Wrap wraps a parser with parsers which parse something before and after.
 // Resulting parsers' parsing results are ones of the middle parsers.
 func (s *State) Wrap(l, m, r Parser) Parser {
-	p := s.And(l, m, r)
-
-	return func() (interface{}, error) {
-		xs, err := p()
-
-		if err != nil {
-			return nil, err
-		}
-
-		return xs.([]interface{})[1], nil
-	}
+	return s.second(s.And(l, m, r))
 }
 
 // Prefix creates a parser with 2 parsers which returns the second one's result.
@@ -273,4 +263,16 @@ func stringToRuneSet(s string) map[rune]bool {
 	}
 
 	return rs
+}
+
+func (s *State) second(p Parser) Parser {
+	return func() (interface{}, error) {
+		xs, err := p()
+
+		if err != nil {
+			return nil, err
+		}
+
+		return xs.([]interface{})[1], nil
+	}
 }

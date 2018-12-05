@@ -19,15 +19,35 @@ func NewPositionalState(s string) *PositionalState {
 	return &PositionalState{*NewState(s), position{-1, -1}}
 }
 
-// WithPosition creates a parser saving a current position.
-func (s *PositionalState) WithPosition(p Parser) Parser {
+// WithOldAndNewPositions creates a parser which saves a current position, runs
+// the first parser, updates a position reference with the position, and then
+// runs the second parser.
+func (s *PositionalState) WithOldAndNewPositions(p, q Parser) Parser {
 	return func() (interface{}, error) {
+		ss := *s
+		x, err := p()
+
+		if err != nil {
+			return nil, err
+		}
+
 		pp := s.position
-		s.position = position{s.lineIndex, s.columnIndex}
+		s.position = position{ss.lineIndex, ss.columnIndex}
 		defer func() { s.position = pp }()
 
-		return p()
+		y, err := q()
+
+		if err != nil {
+			return nil, err
+		}
+
+		return []interface{}{x, y}, nil
 	}
+}
+
+// WithPosition creates a parser saving a current position.
+func (s *PositionalState) WithPosition(p Parser) Parser {
+	return s.second(s.WithOldAndNewPositions(s.None(), p))
 }
 
 // Block creates a parser which parses a block of the second parsers prefixed

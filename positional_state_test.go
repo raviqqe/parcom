@@ -84,3 +84,27 @@ func TestPositionalStateIndentError(t *testing.T) {
 
 	assert.Error(t, err)
 }
+
+func TestPositionalStateWithOldAndNewPositions(t *testing.T) {
+	s := newState("foo foo")
+	p := s.Indent(s.stripRight(s.Str("foo")))
+	_, err := s.WithOldAndNewPositions(p, p)()
+
+	assert.Nil(t, err)
+}
+
+func TestPositionalStateWithOldAndNewPositionsError(t *testing.T) {
+	s := newState("bar foo")
+	p := s.Indent(s.stripRight(s.Str("foo")))
+	_, err := s.WithOldAndNewPositions(p, p)()
+
+	assert.Error(t, err)
+}
+
+func TestPositionalStateWithPosition(t *testing.T) {
+	s := newState(" foo")
+	x, err := s.WithPosition(s.Prefix(s.blanks(), s.Indent(s.Str("foo"))))()
+
+	assert.Equal(t, "foo", x)
+	assert.Nil(t, err)
+}
