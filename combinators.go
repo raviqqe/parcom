@@ -139,7 +139,7 @@ func (s *State) Or(ps ...Parser) Parser {
 		ss := *s
 
 		for _, p := range ps {
-			x := interface{}(nil)
+			var x interface{}
 			x, err = p()
 
 			if err == nil {
