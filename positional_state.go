@@ -30,19 +30,30 @@ func (s *PositionalState) WithPosition(p Parser) Parser {
 	}
 }
 
-// Block creates a parser which parses a block of the second parsers prefixed
-// by the first parser.
-func (s *PositionalState) Block(p, pp Parser) Parser {
-	return s.block(s.Many, p, pp)
+// Block parses a block of a given parser.
+func (s *PositionalState) Block(p Parser) Parser {
+	return s.WithPosition(s.Many(s.SameColumn(p)))
 }
 
-// Block1 is the same as the Block but blocks must have at least one element.
-func (s *PositionalState) Block1(p, pp Parser) Parser {
-	return s.block(s.Many1, p, pp)
+// Block1 is the same as Block but blocks must have at least one element.
+func (s *PositionalState) Block1(p Parser) Parser {
+	return s.WithPosition(s.Many1(s.SameColumn(p)))
 }
 
-func (s *PositionalState) block(m func(Parser) Parser, p, pp Parser) Parser {
-	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(s.WithPosition(m(s.SameColumn(pp))))))
+// WithBlock creates a parser which parses a block of the second parsers prefixed
+// by the first parser. Blocks must have at least one element.
+func (s *PositionalState) WithBlock(p, pp Parser) Parser {
+	return s.withBlock(s.Block, p, pp)
+}
+
+// WithBlock1 creates a parser which parses a block of the second parsers prefixed
+// by the first parser. Blocks must have at least one element.
+func (s *PositionalState) WithBlock1(p, pp Parser) Parser {
+	return s.withBlock(s.Block1, p, pp)
+}
+
+func (s *PositionalState) withBlock(b func(Parser) Parser, p, pp Parser) Parser {
+	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(b(pp))))
 }
 
 // Indent creates a parser which parses an indent before running a given parser.

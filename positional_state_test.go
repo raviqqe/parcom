@@ -25,38 +25,82 @@ func (s *state) stripRight(p parcom.Parser) parcom.Parser {
 
 func TestPositionalStateBlock(t *testing.T) {
 	for _, ss := range []string{
-		"foo\n  bar\n  bar",
+		"",
 		"foo",
+		"foo\nfoo",
 	} {
 		s := newState(ss)
-		_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+		_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo"))))()
 
 		assert.Nil(t, err)
 	}
 }
 
-func TestPositionalStateBlockErrorWithInvalidBlockIndent(t *testing.T) {
-	s := newState("foo\nbar")
-	_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+func TestPositionalStateBlockError(t *testing.T) {
+	s := newState("foo\n foo")
+	_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo"))))()
 
 	assert.Error(t, err)
 }
 
 func TestPositionalStateBlock1(t *testing.T) {
+	for _, ss := range []string{
+		"foo",
+		"foo\nfoo",
+	} {
+		s := newState(ss)
+		_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo"))))()
+
+		assert.Nil(t, err)
+	}
+}
+
+func TestPositionalStateBlock1Error(t *testing.T) {
+	for _, ss := range []string{
+		"",
+		"foo\n foo",
+	} {
+		s := newState(ss)
+		_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo"))))()
+
+		assert.Error(t, err)
+	}
+}
+
+func TestPositionalStateWithBlock(t *testing.T) {
+	for _, ss := range []string{
+		"foo\n  bar\n  bar",
+		"foo",
+	} {
+		s := newState(ss)
+		_, err := s.Exhaust(s.WithBlock(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+		assert.Nil(t, err)
+	}
+}
+
+func TestPositionalStateWithBlockErrorWithInvalidBlockIndent(t *testing.T) {
+	s := newState("foo\nbar")
+	_, err := s.Exhaust(s.WithBlock(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+	assert.Error(t, err)
+}
+
+func TestPositionalStateWithBlock1(t *testing.T) {
 	s := newState("foo\n  bar\n  bar")
-	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+	_, err := s.Exhaust(s.WithBlock1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
 
 	assert.Nil(t, err)
 }
 
-func TestPositionalStateBlock1WithNestedBlocks(t *testing.T) {
+func TestPositionalStateWithBlock1WithNestedBlocks(t *testing.T) {
 	s := newState("foo\n  bar\n  foo\n   bar\n  bar")
 	_, err := s.Exhaust(
-		s.Block1(
+		s.WithBlock1(
 			s.stripRight(s.Str("foo")),
 			s.Or(
 				s.stripRight(s.Str("bar")),
-				s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))),
+				s.WithBlock1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))),
 			),
 		),
 	)()
@@ -64,16 +108,16 @@ func TestPositionalStateBlock1WithNestedBlocks(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestPositionalStateBlock1Error(t *testing.T) {
+func TestPositionalStateWithBlock1Error(t *testing.T) {
 	s := newState("foo")
-	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+	_, err := s.Exhaust(s.WithBlock1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
 
 	assert.Error(t, err)
 }
 
-func TestPositionalStateBlock1ErrorWithInvalidBlockIndent(t *testing.T) {
+func TestPositionalStateWithBlock1ErrorWithInvalidBlockIndent(t *testing.T) {
 	s := newState("foo\nbar")
-	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+	_, err := s.Exhaust(s.WithBlock1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
 
 	assert.Error(t, err)
 }
