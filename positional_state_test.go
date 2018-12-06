@@ -122,6 +122,20 @@ func TestPositionalStateWithBlock1ErrorWithInvalidBlockIndent(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestPositionalStateHeteroBlock(t *testing.T) {
+	s := newState("foo\nbar")
+	_, err := s.Exhaust(s.HeteroBlock(s.trimRight(s.Str("foo")), s.trimRight(s.Str("bar"))))()
+
+	assert.Nil(t, err)
+}
+
+func TestPositionalStateHeteroBlockError(t *testing.T) {
+	s := newState("foo\n bar")
+	_, err := s.Exhaust(s.HeteroBlock(s.trimRight(s.Str("foo")), s.trimRight(s.Str("bar"))))()
+
+	assert.Error(t, err)
+}
+
 func TestPositionalStateIndent(t *testing.T) {
 	s := newState(" foo")
 	_, err := s.WithPosition(s.And(s.blanks(), s.Indent(s.Str("foo"))))()

@@ -56,6 +56,17 @@ func (s *PositionalState) withBlock(b func(Parser) Parser, p, pp Parser) Parser 
 	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(b(pp))))
 }
 
+// HeteroBlock creates a parser to parse something all in the same column.
+func (s *PositionalState) HeteroBlock(ps ...Parser) Parser {
+	qs := make([]Parser, 0, len(ps))
+
+	for _, p := range ps {
+		qs = append(qs, s.SameColumn(p))
+	}
+
+	return s.WithPosition(s.And(qs...))
+}
+
 // Indent creates a parser which parses an indent before running a given parser.
 // It is equivalent to a given parser and parses no indent if no position is
 // saved beforehand.
