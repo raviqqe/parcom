@@ -33,12 +33,16 @@ func (s *PositionalState) WithPosition(p Parser) Parser {
 // Block creates a parser which parses a block of the second parsers prefixed
 // by the first parser.
 func (s *PositionalState) Block(p, pp Parser) Parser {
-	return s.Prefix(p, s.WithPosition(s.Many(s.atColumn(pp))))
+	return s.block(s.Many, p, pp)
 }
 
 // Block1 is the same as the Block but blocks must have at least one element.
 func (s *PositionalState) Block1(p, pp Parser) Parser {
-	return s.Prefix(p, s.WithPosition(s.Many1(s.atColumn(pp))))
+	return s.block(s.Many1, p, pp)
+}
+
+func (s *PositionalState) block(m func(Parser) Parser, p, pp Parser) Parser {
+	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(s.WithPosition(m(s.atColumn(pp))))))
 }
 
 // Indent creates a parser which parses an indent before running a given parser.

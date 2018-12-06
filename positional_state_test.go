@@ -35,6 +35,13 @@ func TestPositionalStateBlock(t *testing.T) {
 	}
 }
 
+func TestPositionalStateBlockErrorWithInvalidBlockIndent(t *testing.T) {
+	s := newState("foo\nbar")
+	_, err := s.Exhaust(s.Block(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+	assert.Error(t, err)
+}
+
 func TestPositionalStateBlock1(t *testing.T) {
 	s := newState("foo\n  bar\n  bar")
 	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
@@ -59,6 +66,13 @@ func TestPositionalStateBlock1WithNestedBlocks(t *testing.T) {
 
 func TestPositionalStateBlock1Error(t *testing.T) {
 	s := newState("foo")
+	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
+
+	assert.Error(t, err)
+}
+
+func TestPositionalStateBlock1ErrorWithInvalidBlockIndent(t *testing.T) {
+	s := newState("foo\nbar")
 	_, err := s.Exhaust(s.Block1(s.stripRight(s.Str("foo")), s.stripRight(s.Str("bar"))))()
 
 	assert.Error(t, err)
