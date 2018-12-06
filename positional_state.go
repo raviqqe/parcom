@@ -42,7 +42,7 @@ func (s *PositionalState) Block1(p, pp Parser) Parser {
 }
 
 func (s *PositionalState) block(m func(Parser) Parser, p, pp Parser) Parser {
-	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(s.WithPosition(m(s.atColumn(pp))))))
+	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(s.WithPosition(m(s.SameColumn(pp))))))
 }
 
 // Indent creates a parser which parses an indent before running a given parser.
@@ -74,7 +74,8 @@ func (s *PositionalState) SameLineOrIndent(p Parser) Parser {
 	return s.Or(s.SameLine(p), s.Indent(p))
 }
 
-func (s *PositionalState) atColumn(p Parser) Parser {
+// SameColumn creates a parser which parses something in the same column.
+func (s *PositionalState) SameColumn(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.columnIndex != s.position.columnIndex {
 			return nil, errors.New("invalid indent")
