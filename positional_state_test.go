@@ -79,6 +79,14 @@ func TestPositionalStateWithBlock(t *testing.T) {
 	}
 }
 
+func TestPositionalStateWithBlockResult(t *testing.T) {
+	s := newState("foo\n  bar")
+	r, err := s.Exhaust(s.WithBlock(s.trimRight(s.Str("foo")), s.trimRight(s.Str("bar"))))()
+
+	assert.Nil(t, err)
+	assert.Equal(t, []interface{}{"foo", []interface{}{"bar"}}, r)
+}
+
 func TestPositionalStateWithBlockErrorWithInvalidBlockIndent(t *testing.T) {
 	s := newState("foo\nbar")
 	_, err := s.Exhaust(s.WithBlock(s.trimRight(s.Str("foo")), s.trimRight(s.Str("bar"))))()

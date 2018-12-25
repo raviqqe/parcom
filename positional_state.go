@@ -53,7 +53,7 @@ func (s *PositionalState) WithBlock1(p, pp Parser) Parser {
 }
 
 func (s *PositionalState) withBlock(b func(Parser) Parser, p, pp Parser) Parser {
-	return s.WithPosition(s.Prefix(p, s.SameLineOrIndent(b(pp))))
+	return s.WithPosition(s.And(p, s.SameLineOrIndent(b(pp))))
 }
 
 // HeteroBlock creates a parser to parse something all in the same column.
