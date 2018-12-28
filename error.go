@@ -28,5 +28,9 @@ func (e Error) Column() int {
 }
 
 func newInvalidCharacterError(s *State) Error {
+	if s.currentRune() == 0 {
+		return NewError("unexpected end of source", s)
+	}
+
 	return NewError(fmt.Sprintf("invalid character '%c'", s.currentRune()), s)
 }

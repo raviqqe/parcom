@@ -25,6 +25,14 @@ func TestCharsError(t *testing.T) {
 	assert.Equal(t, 1, err.(parcom.Error).Column())
 }
 
+func TestCharsErrorWithEmptySource(t *testing.T) {
+	s := parcom.NewState("")
+	_, err := s.Chars("a")()
+
+	assert.Error(t, err)
+	assert.Equal(t, "unexpected end of source", err.Error())
+}
+
 func TestNotChar(t *testing.T) {
 	s := parcom.NewState("a")
 	x, err := s.NotChar(' ')()
