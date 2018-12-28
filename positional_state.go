@@ -1,9 +1,5 @@
 package parcom
 
-import (
-	"errors"
-)
-
 type position struct {
 	lineIndex, columnIndex int // -1 indicates invalid position.
 }
@@ -78,7 +74,7 @@ func (s *PositionalState) ExhaustiveBlock(p Parser) Parser {
 func (s *PositionalState) Indent(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.position.columnIndex >= 0 && s.columnIndex <= s.position.columnIndex {
-			return nil, errors.New("invalid indent")
+			return nil, NewError("invalid indent", &s.State)
 		}
 
 		return p()
@@ -89,7 +85,7 @@ func (s *PositionalState) Indent(p Parser) Parser {
 func (s *PositionalState) SameLine(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.position.columnIndex >= 0 && s.lineIndex != s.position.lineIndex {
-			return nil, errors.New("should be in the same line")
+			return nil, NewError("should be in the same line", &s.State)
 		}
 
 		return p()
@@ -105,7 +101,7 @@ func (s *PositionalState) SameLineOrIndent(p Parser) Parser {
 func (s *PositionalState) SameColumn(p Parser) Parser {
 	return func() (interface{}, error) {
 		if s.columnIndex != s.position.columnIndex {
-			return nil, errors.New("invalid indent")
+			return nil, NewError("invalid indent", &s.State)
 		}
 
 		return p()
