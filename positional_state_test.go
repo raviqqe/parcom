@@ -220,6 +220,14 @@ func TestPositionalStateSameLineOrIndentError(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestPositionalStateSameLineOrIndentErrorWithExhaustedSource(t *testing.T) {
+	s := newState("foo\n")
+	_, err := s.WithPosition(s.And(s.trimRight(s.Str("foo")), s.SameLineOrIndent(s.Str("foo"))))()
+
+	assert.Error(t, err)
+	assert.Equal(t, "unexpected end of source", err.Error())
+}
+
 func TestPositionalStateSameColumn(t *testing.T) {
 	s := newState("foo\nfoo")
 	_, err := s.WithPosition(s.And(s.trimRight(s.Str("foo")), s.SameColumn(s.Str("foo"))))()
