@@ -144,6 +144,28 @@ func TestPositionalStateHeteroBlockError(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestPositionalStateExhaustiveBlock(t *testing.T) {
+	for _, ss := range []string{
+		"",
+		"foo",
+		"foo\nfoo",
+	} {
+		s := newState(ss)
+		_, err := s.Exhaust(s.ExhaustiveBlock(s.trimRight(s.Str("foo"))))()
+
+		assert.Nil(t, err)
+	}
+}
+
+func TestPositionalStateExhaustiveBlockError(t *testing.T) {
+	s := newState("foo\nfoe")
+	_, err := s.Exhaust(s.ExhaustiveBlock(s.trimRight(s.Str("foo"))))()
+
+	assert.Error(t, err)
+	assert.Equal(t, 2, err.(parcom.Error).Line())
+	assert.Equal(t, 3, err.(parcom.Error).Column())
+}
+
 func TestPositionalStateIndent(t *testing.T) {
 	s := newState(" foo")
 	_, err := s.WithPosition(s.And(s.blanks(), s.Indent(s.Str("foo"))))()

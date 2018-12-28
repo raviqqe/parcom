@@ -67,6 +67,11 @@ func (s *PositionalState) HeteroBlock(ps ...Parser) Parser {
 	return s.WithPosition(s.And(qs...))
 }
 
+// ExhaustiveBlock parses a block of a given parser exhaustively.
+func (s *PositionalState) ExhaustiveBlock(p Parser) Parser {
+	return s.WithPosition(s.ExhaustiveMany(s.SameColumn(p)))
+}
+
 // Indent creates a parser which parses an indent before running a given parser.
 // It is equivalent to a given parser and parses no indent if no position is
 // saved beforehand.
