@@ -20,7 +20,7 @@ func TestCharsError(t *testing.T) {
 	x, err := s.Chars("abc")()
 
 	assert.Nil(t, x)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, 1, err.(parcom.Error).Line())
 	assert.Equal(t, 1, err.(parcom.Error).Column())
 }
@@ -44,14 +44,14 @@ func TestNotCharError(t *testing.T) {
 	s := parcom.NewState(" ")
 	x, err := s.NotChar(' ')()
 	assert.Nil(t, x)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 func TestStrError(t *testing.T) {
 	s := parcom.NewState("foe")
 	_, err := s.Str("foo")()
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, 1, err.(parcom.Error).Line())
 	assert.Equal(t, 3, err.(parcom.Error).Column())
 }
@@ -74,7 +74,7 @@ func TestPrefixError(t *testing.T) {
 	s := parcom.NewState("abc")
 	x, err := s.Prefix(s.Str("ad"), s.Str("c"))()
 	assert.Nil(t, x)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 func TestSuffix(t *testing.T) {
@@ -116,7 +116,7 @@ func TestManyError(t *testing.T) {
 		t.Logf("%#v", x)
 
 		assert.Nil(t, x)
-		assert.NotNil(t, err)
+		assert.Error(t, err)
 	}
 }
 
@@ -140,7 +140,7 @@ func TestMany1Error(t *testing.T) {
 	t.Log(err)
 
 	assert.Nil(t, x)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 func TestMany1Nest(t *testing.T) {
@@ -175,7 +175,7 @@ func TestOrError(t *testing.T) {
 	t.Log(err)
 
 	assert.Nil(t, x)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 func TestMaybeSuccess(t *testing.T) {
@@ -202,7 +202,7 @@ func TestExhaustError(t *testing.T) {
 	s := parcom.NewState("foo bar")
 	_, err := s.Exhaust(s.Str("foo"))()
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, 1, err.(parcom.Error).Line())
 	assert.Equal(t, 4, err.(parcom.Error).Column())
 }
@@ -211,7 +211,7 @@ func TestExhaustErrorWithMany(t *testing.T) {
 	s := parcom.NewState("foofoe")
 	_, err := s.Exhaust(s.Many(s.Str("foo")))()
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, 1, err.(parcom.Error).Line())
 	assert.Equal(t, 4, err.(parcom.Error).Column())
 }
@@ -228,7 +228,7 @@ func TestExhaustErrorWithExhaustiveMany(t *testing.T) {
 	s := parcom.NewState("foofoe")
 	_, err := s.Exhaust(s.ExhaustiveMany(s.Str("foo")))()
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 	assert.Equal(t, 1, err.(parcom.Error).Line())
 	assert.Equal(t, 6, err.(parcom.Error).Column())
 }
@@ -237,7 +237,7 @@ func TestExhaustWithErroneousParser(t *testing.T) {
 	s := parcom.NewState("")
 	_, err := s.Exhaust(s.Str("foo"))()
 
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 func TestStringify(t *testing.T) {
