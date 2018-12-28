@@ -18,8 +18,11 @@ func TestChars(t *testing.T) {
 func TestCharsError(t *testing.T) {
 	s := parcom.NewState("d")
 	x, err := s.Chars("abc")()
+
 	assert.Nil(t, x)
 	assert.NotNil(t, err)
+	assert.Equal(t, 1, err.(parcom.Error).Line())
+	assert.Equal(t, 1, err.(parcom.Error).Column())
 }
 
 func TestNotChar(t *testing.T) {
@@ -34,6 +37,15 @@ func TestNotCharError(t *testing.T) {
 	x, err := s.NotChar(' ')()
 	assert.Nil(t, x)
 	assert.NotNil(t, err)
+}
+
+func TestStrError(t *testing.T) {
+	s := parcom.NewState("foe")
+	_, err := s.Str("foo")()
+
+	assert.NotNil(t, err)
+	assert.Equal(t, 1, err.(parcom.Error).Line())
+	assert.Equal(t, 3, err.(parcom.Error).Column())
 }
 
 func TestWrap(t *testing.T) {
@@ -178,9 +190,28 @@ func TestMaybeError(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestExhaustError(t *testing.T) {
+	s := parcom.NewState("foo bar")
+	_, err := s.Exhaust(s.Str("foo"))()
+
+	assert.NotNil(t, err)
+	assert.Equal(t, 1, err.(parcom.Error).Line())
+	assert.Equal(t, 4, err.(parcom.Error).Column())
+}
+
+func TestExhaustErrorWithMany(t *testing.T) {
+	s := parcom.NewState("foofoe")
+	_, err := s.Exhaust(s.Many(s.Str("foo")))()
+
+	assert.NotNil(t, err)
+	assert.Equal(t, 1, err.(parcom.Error).Line())
+	assert.Equal(t, 4, err.(parcom.Error).Column())
+}
+
 func TestExhaustWithErroneousParser(t *testing.T) {
 	s := parcom.NewState("")
 	_, err := s.Exhaust(s.Str("foo"))()
+
 	assert.NotNil(t, err)
 }
 

@@ -1,16 +1,12 @@
 package parcom
 
-import (
-	"errors"
-	"fmt"
-	"strings"
-)
+import "strings"
 
 // Char creates a parser to parse a character.
 func (s *State) Char(r rune) Parser {
 	return func() (interface{}, error) {
 		if s.currentRune() != r {
-			return nil, fmt.Errorf("invalid character, '%c'", s.currentRune())
+			return nil, newInvalidCharacterError(s)
 		}
 
 		s.readRune()
@@ -34,7 +30,7 @@ func (s *State) Chars(cs string) Parser {
 			return s.currentRune(), nil
 		}
 
-		return nil, fmt.Errorf("invalid character, '%c'", s.currentRune())
+		return nil, newInvalidCharacterError(s)
 	}
 }
 
@@ -48,7 +44,7 @@ func (s *State) NotChars(str string) Parser {
 			return s.currentRune(), nil
 		}
 
-		return nil, fmt.Errorf("invalid character, '%c'", s.currentRune())
+		return nil, newInvalidCharacterError(s)
 	}
 }
 
@@ -204,7 +200,7 @@ func (s *State) Exhaust(p Parser) Parser {
 		if err != nil {
 			return nil, err
 		} else if !s.exhausted() {
-			return nil, errors.New("a source is not exhausted")
+			return nil, NewError("source not exhausted", s)
 		}
 
 		return x, nil
