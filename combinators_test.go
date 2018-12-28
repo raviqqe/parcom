@@ -208,6 +208,15 @@ func TestExhaustErrorWithMany(t *testing.T) {
 	assert.Equal(t, 4, err.(parcom.Error).Column())
 }
 
+func TestExhaustErrorWithExhaustiveMany(t *testing.T) {
+	s := parcom.NewState("foofoe")
+	_, err := s.Exhaust(s.ExhaustiveMany(s.Str("foo")))()
+
+	assert.NotNil(t, err)
+	assert.Equal(t, 1, err.(parcom.Error).Line())
+	assert.Equal(t, 6, err.(parcom.Error).Column())
+}
+
 func TestExhaustWithErroneousParser(t *testing.T) {
 	s := parcom.NewState("")
 	_, err := s.Exhaust(s.Str("foo"))()

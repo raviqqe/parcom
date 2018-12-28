@@ -128,6 +128,26 @@ func (s *State) Many1(p Parser) Parser {
 	}
 }
 
+// ExhaustiveMany creates a parser of more than or equal to 0 repetition of a given
+// parser which continues parsing until a source is exhausted.
+func (s *State) ExhaustiveMany(p Parser) Parser {
+	return func() (interface{}, error) {
+		xs := []interface{}{}
+
+		for !s.exhausted() {
+			x, err := p()
+
+			if err != nil {
+				return nil, err
+			}
+
+			xs = append(xs, x)
+		}
+
+		return xs, nil
+	}
+}
+
 // Or creates a selectional parser from given parsers.
 func (s *State) Or(ps ...Parser) Parser {
 	return func() (interface{}, error) {
