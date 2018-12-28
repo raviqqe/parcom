@@ -216,6 +216,14 @@ func TestExhaustErrorWithMany(t *testing.T) {
 	assert.Equal(t, 4, err.(parcom.Error).Column())
 }
 
+func TestExhaustiveMany(t *testing.T) {
+	s := parcom.NewState("foofoo")
+	x, err := s.ExhaustiveMany(s.Str("foo"))()
+
+	assert.Equal(t, []interface{}{"foo", "foo"}, x)
+	assert.Nil(t, err)
+}
+
 func TestExhaustErrorWithExhaustiveMany(t *testing.T) {
 	s := parcom.NewState("foofoe")
 	_, err := s.Exhaust(s.ExhaustiveMany(s.Str("foo")))()
