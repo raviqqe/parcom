@@ -208,6 +208,7 @@ func TestExhaustError(t *testing.T) {
 }
 
 func TestExhaustErrorWithMany(t *testing.T) {
+	// spell-checker: disable-next-line
 	s := parcom.NewState("foofoe")
 	_, err := s.Exhaust(s.Many(s.Str("foo")))()
 
@@ -217,6 +218,7 @@ func TestExhaustErrorWithMany(t *testing.T) {
 }
 
 func TestExhaustiveMany(t *testing.T) {
+	// spell-checker: disable-next-line
 	s := parcom.NewState("foofoo")
 	x, err := s.ExhaustiveMany(s.Str("foo"))()
 
@@ -225,6 +227,7 @@ func TestExhaustiveMany(t *testing.T) {
 }
 
 func TestExhaustErrorWithExhaustiveMany(t *testing.T) {
+	// spell-checker: disable-next-line
 	s := parcom.NewState("foofoe")
 	_, err := s.Exhaust(s.ExhaustiveMany(s.Str("foo")))()
 
