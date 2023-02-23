@@ -21,7 +21,9 @@ func TestStateColumn(t *testing.T) {
 
 func TestStateWithNewLine(t *testing.T) {
 	s := parcom.NewState("\n")
-	s.Char('\n')()
+	_, err := s.Char('\n')()
+
+	assert.Nil(t, err)
 	assert.Equal(t, 2, s.Line())
 	assert.Equal(t, 1, s.Column())
 }
